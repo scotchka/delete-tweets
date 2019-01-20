@@ -1,4 +1,5 @@
 import os
+from time import sleep
 import twitter
 
 api = twitter.Api(
@@ -8,9 +9,12 @@ api = twitter.Api(
     access_token_secret=os.environ["ACCESS_TOKEN_SECRET"],
 )
 
-statuses = api.GetUserTimeline(
-    screen_name=os.environ["SCREEN_NAME"], count=1000, trim_user=True
-)
+while True:
+	statuses = api.GetUserTimeline(
+	    screen_name=os.environ["SCREEN_NAME"], count=1000, trim_user=True
+	)
 
-for status in statuses[25:]:
-    api.DestroyStatus(status.id)
+	for status in statuses[25:]:
+	    api.DestroyStatus(status.id)
+
+	sleep(3600)
