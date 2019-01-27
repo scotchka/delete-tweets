@@ -10,11 +10,15 @@ api = twitter.Api(
 )
 
 while True:
-	statuses = api.GetUserTimeline(
-	    screen_name=os.environ["SCREEN_NAME"], count=1000, trim_user=True
-	)
+	try:
+		statuses = api.GetUserTimeline(
+		    screen_name=os.environ["SCREEN_NAME"], count=1000, trim_user=True
+		)
+	except Exception as e:
+		print(e)
+	else:
 
-	for status in statuses[25:]:
-	    api.DestroyStatus(status.id)
+		for status in statuses[25:]:
+		    api.DestroyStatus(status.id)
 
 	sleep(3600)
