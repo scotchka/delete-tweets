@@ -2,6 +2,9 @@ import os
 from time import sleep
 import twitter
 
+import sentry_sdk
+sentry_sdk.init(os.environ["SENTRY_URL"])
+
 api = twitter.Api(
     consumer_key=os.environ["CONSUMER_KEY"],
     consumer_secret=os.environ["CONSUMER_SECRET"],
@@ -17,7 +20,6 @@ while True:
 	except Exception as e:
 		print(e)
 	else:
-
 		for status in statuses[25:]:
 		    api.DestroyStatus(status.id)
 
