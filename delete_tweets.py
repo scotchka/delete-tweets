@@ -1,8 +1,7 @@
 import os
-from time import sleep
 import twitter
-
 import sentry_sdk
+
 sentry_sdk.init(os.environ["SENTRY_URL"])
 
 api = twitter.Api(
@@ -12,15 +11,14 @@ api = twitter.Api(
     access_token_secret=os.environ["ACCESS_TOKEN_SECRET"],
 )
 
-while True:
-	try:
-		statuses = api.GetUserTimeline(
-		    screen_name=os.environ["SCREEN_NAME"], count=1000, trim_user=True
-		)
-	except Exception as e:
-		print(e)
-	else:
-		for status in statuses[25:]:
-		    api.DestroyStatus(status.id)
+user_id = api.GetUser(screen_name=os.environ["SCREEN_NAME"]).id_str
 
-	sleep(3600)
+for tweet in api.GetStreamFilter(follow=[user_id]):
+    try:
+        statuses = api.GetUserTimeline(user_id=user_id, count=1000, trim_user=True)
+    except Exception as e:
+        print(e)
+    else:
+        for status in statuses[25:]:
+            api.DestroyStatus(status.id)
+            print(status)
