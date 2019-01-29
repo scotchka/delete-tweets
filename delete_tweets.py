@@ -1,24 +1,31 @@
 import os
+import time
 import twitter
 import sentry_sdk
 
 sentry_sdk.init(os.environ["SENTRY_URL"])
 
-api = twitter.Api(
-    consumer_key=os.environ["CONSUMER_KEY"],
-    consumer_secret=os.environ["CONSUMER_SECRET"],
-    access_token_key=os.environ["ACCESS_TOKEN_KEY"],
-    access_token_secret=os.environ["ACCESS_TOKEN_SECRET"],
-)
+def bot():
 
-user_id = api.GetUser(screen_name=os.environ["SCREEN_NAME"]).id_str
+    api = twitter.Api(
+        consumer_key=os.environ["CONSUMER_KEY"],
+        consumer_secret=os.environ["CONSUMER_SECRET"],
+        access_token_key=os.environ["ACCESS_TOKEN_KEY"],
+        access_token_secret=os.environ["ACCESS_TOKEN_SECRET"],
+    )
 
-for tweet in api.GetStreamFilter(follow=[user_id]):
-    try:
+    user_id = api.GetUser(screen_name=os.environ["SCREEN_NAME"]).id_str
+
+    for tweet in api.GetStreamFilter(follow=[user_id]):
         statuses = api.GetUserTimeline(user_id=user_id, count=1000, trim_user=True)
-    except Exception as e:
-        print(e)
-    else:
+
         for status in statuses[25:]:
             api.DestroyStatus(status.id)
             print(status)
+
+while True:
+    try:
+        bot()
+    except Exception as e:
+        print(e)
+        time.sleep(5)
