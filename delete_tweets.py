@@ -16,7 +16,7 @@ def bot():
     for tweet in api.GetStreamFilter(follow=[user_id]):
         statuses = api.GetUserTimeline(user_id=user_id, count=1000, trim_user=True)
 
-        for status in statuses[25:]:
+        for status in statuses[5:]:
             api.DestroyStatus(status.id)
             print(status)
 
